@@ -1,5 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
 
 const server = express();
 server.use(express.json());
@@ -11,8 +14,106 @@ server.use(
   })
 );
 
-const DB_USER = "lfchiqueto";
-const DB_PASSWORD = "TGv186WuZiqDtl95";
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "API de Produtos",
+      version: "1.0.0",
+      description:
+        "Uma API simples para gerenciar produtos, documentada com Swagger",
+    },
+    // ✅ AQUI ESTÁ A PARTE ESSENCIAL QUE RESOLVE O ERRO
+    components: {
+      schemas: {
+        Produto: {
+          type: "object",
+          required: ["nome", "descricao", "cor", "peso", "tipo", "preco"],
+          properties: {
+            id: {
+              type: "string",
+              description: "ID gerado automaticamente pelo MongoDB.",
+              example: "60d0fe4f5311236168a109ca"
+            },
+            nome: {
+              type: "string",
+              description: "O nome do produto.",
+              example: "Cadeira Gamer"
+            },
+            descricao: {
+              type: "string",
+              description: "Uma breve descrição sobre o produto.",
+              example: "Cadeira ergonômica para longas sessões de jogos."
+            },
+            cor: {
+              type: "string",
+              description: "A cor do produto.",
+              example: "Preto e Vermelho"
+            },
+            peso: {
+              type: "number",
+              description: "O peso do produto em kg.",
+              example: 18.5
+            },
+            tipo: {
+              type: "string",
+              description: "A categoria ou tipo do produto.",
+              example: "Móveis"
+            },
+            preco: {
+              type: "number",
+              format: "float",
+              description: "O preço do produto.",
+              example: 1250.99
+            },
+            dataCadastro: {
+              type: "string",
+              format: "date-time",
+              description: "A data em que o produto foi cadastrado.",
+              example: "2025-06-13T18:20:00.000Z"
+            }
+          }
+        }
+      },
+      requestBodies: {
+        UpdateProductBody: {
+          description: "Dados para atualizar um produto existente. Pelo menos um campo deve ser fornecido.",
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  descricao: { type: "string" },
+                  cor: { type: "string" },
+                  peso: { type: "number" },
+                  tipo: { type: "string" },
+                  preco: { type: "number" },
+                },
+                example: {
+                  descricao: "Cadeira ergonômica com apoio lombar ajustável.",
+                  preco: 1350.00
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    servers: [
+      {
+        url: `http://localhost:${process.env.PORT || 3000}`,
+      },
+      {
+        url: `https://jubilant-telegram-x46xqppgxpr2vg6j-3000.app.github.dev`,
+      },
+    ],
+  },
+  apis: ["./routes/*.js"],
+};
+
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
 
 //Conexão com o MongoDB Atlas
 mongoose
@@ -24,146 +125,17 @@ mongoose
     console.log("Erro ao conectar ao MongoDB Atlas:", e);
   });
 
-const funcionarioRoutes = require("./routes/funcionarioRoutes");
+const swaggerSpec = swaggerJsdoc(options);
 
-server.use("/funcionario", funcionarioRoutes);
+const produtoRoutes = require("./routes/produtoRoutes");
+
+server.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+server.use("/produto", produtoRoutes);
 
 server.listen(3000, () => {
   console.log("Servidor rodando na porta 3000");
+  console.log(
+    "Documentação da API disponível em http://localhost:3000/api-docs"
+  );
 });
-
-/*
-
-const cursos = [
-  "NodeJS",
-  "ReactJS",
-  "React Native",
-  "JavaScript",
-  "TypeScript",
-];
-
-// 1 – Middleware para verificar Request Body em PUT
-function verificarRequestBodyPut(req, res, next) {
-  if (req.method === "PUT" && Object.keys(req.body).length === 0) {
-    return res.status(400).json({
-      error: "Erro: Requisição PUT sem Request Body.",
-      orientacao:
-        "Envie os dados a serem atualizados no corpo da requisição (Request Body) no formato JSON.",
-    });
-  }
-  next();
-}
-
-// 2 – Middleware para formatar a resposta do DELETE
-function formatarRespostaDelete(req, res, next) {
-  res.formatarRespostaDelete = (mensagem, cursos) => {
-    return res.json({ mensagem, cursos });
-  };
-  next();
-}
-
-// 3 – Middleware para log de inserção de cursos
-function logCursoInserido(req, res, next) {
-  res.on("finish", () => {
-    if (
-      req.method === "POST" &&
-      req.route.path === "/curso" &&
-      res.statusCode >= 200 &&
-      res.statusCode < 300
-    ) {
-      console.log(
-        "Lista de cursos atualizada (após POST):",
-        res.locals.cursosAtualizado
-      );
-    }
-  });
-  next();
-}
-
-// 4 – Middleware para log de deleção de cursos
-function logCursoDeletado(req, res, next) {
-  res.on("finish", () => {
-    if (
-      req.method === "DELETE" &&
-      req.route.path.startsWith("/curso/") &&
-      res.statusCode >= 200 &&
-      res.statusCode < 300
-    ) {
-      console.log(
-        "Lista de cursos atualizada (após DELETE):",
-        res.locals.cursosAtualizado
-      );
-    }
-  });
-  next();
-}
-
-// Middleware de log geral (opcional)
-// server.use((req, res, next) => {
-//   console.log(`Método: ${req.method} | URL: ${req.url}`);
-//   next();
-// });
-
-function checkCurso(req, res, next) {
-  if (!req.body.novo_curso) {
-    return res.status(400).json({
-      error:
-        "O campo 'novo_curso' é obrigatório! Nesse formato: {'novo_curso': 'Lua'}",
-    });
-  }
-  return next();
-}
-
-function checkIdCurso(req, res, next) {
-  const index = req.params.index;
-  if (!cursos[index]) {
-    return res
-      .status(400)
-      .json({ error: "Curso não encontrado no ID solicitado!" });
-  }
-  req.cursoIndex = parseInt(index); // Passando o índice para a rota
-  next();
-}
-
-server.get("/curso/:index", checkIdCurso, (req, res) => {
-  return res.json(cursos[req.params.index]);
-});
-
-server.get("/curso", (req, res) => {
-  return res.json(cursos);
-});
-
-server.post("/curso", checkCurso, logCursoInserido, (req, res) => {
-  const { novo_curso } = req.body;
-  cursos.push(novo_curso);
-  res.locals.cursosAtualizado = [...cursos]; // Passando a lista atualizada para o middleware de log
-  return res.json(cursos);
-});
-
-server.put(
-  "/curso/:index",
-  verificarRequestBodyPut,
-  checkIdCurso,
-  (req, res) => {
-    const { curso } = req.body;
-    cursos[req.cursoIndex] = curso;
-    return res.json(cursos);
-  }
-);
-
-server.delete(
-  "/curso/:index",
-  checkIdCurso,
-  formatarRespostaDelete,
-  logCursoDeletado,
-  (req, res) => {
-    const cursoDeletado = cursos.splice(req.cursoIndex, 1);
-    res.locals.cursosAtualizado = [...cursos]; // Passando a lista atualizada para o middleware de log
-    res.formatarRespostaDelete(
-      `Curso "${cursoDeletado[0]}" deletado com sucesso!`,
-      cursos
-    );
-  }
-);
-
-*/
