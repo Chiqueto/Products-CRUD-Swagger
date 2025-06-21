@@ -95,6 +95,48 @@ router.get("/", async (req, res) => {
 
 /**
  * @swagger
+ * /produto:
+ *  get:
+ *    summary: Retorna o produto pelo nome.
+ *    tags: [Produtos]
+ *    parameters:
+ *         - in: path
+ *           name: nome
+ *           schema:
+ *             type: string
+ *           required: true
+ *           description: O nome do produto a ser buscado.
+ *    responses:
+ *      200:
+ *        description: produto retornada com sucesso.
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: array
+ *            items:
+ *              $ref: '#/components/schemas/Produto'
+ *      404:
+ *        description: Nenhum produto encontrado.
+ *      500:
+ *        description: Ocorreu um erro no servidor.
+ */
+router.get("/:nome", async (req, res) => {
+  const { nome } = req.params;
+  try {
+    const produtos = await Produto.findOne({ nome });
+
+    if (!produtos) {
+      return res.status(404).json({ message: "Produto não encontrado!" });
+    }
+
+    res.status(200).json(produtos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * @swagger
  * /produto/{nome}:
  *  delete:
  *    summary: Deleta um produto pelo nome.
@@ -116,8 +158,6 @@ router.get("/", async (req, res) => {
  */
 router.delete("/:nome", async (req, res) => {
   const { nome } = req.params;
-  // A validação de 'nome' no path é feita pelo próprio Express, esta checagem extra pode ser removida.
-  // if (!nome) { ... }
 
   try {
     const produtoExistente = await Produto.findOne({ nome });
