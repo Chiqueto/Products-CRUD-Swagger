@@ -95,7 +95,7 @@ router.get("/", async (req, res) => {
 
 /**
  * @swagger
- * /produto:
+ * /produto/{nome}:
  *  get:
  *    summary: Retorna o produto pelo nome.
  *    tags: [Produtos]
