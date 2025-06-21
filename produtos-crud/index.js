@@ -108,6 +108,9 @@ const options = {
       {
         url: `https://jubilant-telegram-x46xqppgxpr2vg6j-3000.app.github.dev`,
       },
+      {
+        url: "https://products-crud-7qyd.onrender.com",
+      },
     ],
   },
   apis: ["./routes/*.js"],
