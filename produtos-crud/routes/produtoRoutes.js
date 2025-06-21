@@ -28,20 +28,35 @@ const Produto = require("../models/Produto");
  *            peso: 1.2
  *            tipo: "Periféricos"
  *            preco: 450.00
- *          responses:
- *            '201':
- *              description: Produto cadastrado com sucesso!
- *            '422':
- *              description: Erro de validação. Campos obrigatórios ausentes.
- *            '500':
- *              description: Ocorreu um erro no servidor.
+ *    responses:
+ *      '201':
+ *        description: Produto cadastrado com sucesso!
+ *      '422':
+ *        description: Erro de validação. Campos obrigatórios ausentes.
+ *      '500':
+ *        description: Ocorreu um erro no servidor.
  */
 router.post("/", async (req, res) => {
   const { nome, descricao, cor, peso, tipo, preco } = req.body;
-  if (!nome || !descricao || !cor || peso === undefined || !tipo || preco === undefined) {
+  if (
+    !nome ||
+    !descricao ||
+    !cor ||
+    peso === undefined ||
+    !tipo ||
+    preco === undefined
+  ) {
     return res.status(422).json({ error: "Todos os campos são obrigatórios!" });
   }
-  const produto = { nome, descricao, cor, peso, tipo, preco, dataCadastro: new Date() };
+  const produto = {
+    nome,
+    descricao,
+    cor,
+    peso,
+    tipo,
+    preco,
+    dataCadastro: new Date(),
+  };
   try {
     await Produto.create(produto);
     res.status(201).json({ message: "Produto cadastrado com sucesso!" });

@@ -23,7 +23,7 @@ const options = {
       description:
         "Uma API simples para gerenciar produtos, documentada com Swagger",
     },
-    // ✅ AQUI ESTÁ A PARTE ESSENCIAL QUE RESOLVE O ERRO
+
     components: {
       schemas: {
         Produto: {
@@ -33,51 +33,52 @@ const options = {
             id: {
               type: "string",
               description: "ID gerado automaticamente pelo MongoDB.",
-              example: "60d0fe4f5311236168a109ca"
+              example: "60d0fe4f5311236168a109ca",
             },
             nome: {
               type: "string",
               description: "O nome do produto.",
-              example: "Cadeira Gamer"
+              example: "Cadeira Gamer",
             },
             descricao: {
               type: "string",
               description: "Uma breve descrição sobre o produto.",
-              example: "Cadeira ergonômica para longas sessões de jogos."
+              example: "Cadeira ergonômica para longas sessões de jogos.",
             },
             cor: {
               type: "string",
               description: "A cor do produto.",
-              example: "Preto e Vermelho"
+              example: "Preto e Vermelho",
             },
             peso: {
               type: "number",
               description: "O peso do produto em kg.",
-              example: 18.5
+              example: 18.5,
             },
             tipo: {
               type: "string",
               description: "A categoria ou tipo do produto.",
-              example: "Móveis"
+              example: "Móveis",
             },
             preco: {
               type: "number",
               format: "float",
               description: "O preço do produto.",
-              example: 1250.99
+              example: 1250.99,
             },
             dataCadastro: {
               type: "string",
               format: "date-time",
               description: "A data em que o produto foi cadastrado.",
-              example: "2025-06-13T18:20:00.000Z"
-            }
-          }
-        }
+              example: "2025-06-13T18:20:00.000Z",
+            },
+          },
+        },
       },
       requestBodies: {
         UpdateProductBody: {
-          description: "Dados para atualizar um produto existente. Pelo menos um campo deve ser fornecido.",
+          description:
+            "Dados para atualizar um produto existente. Pelo menos um campo deve ser fornecido.",
           required: true,
           content: {
             "application/json": {
@@ -92,13 +93,13 @@ const options = {
                 },
                 example: {
                   descricao: "Cadeira ergonômica com apoio lombar ajustável.",
-                  preco: 1350.00
-                }
-              }
-            }
-          }
-        }
-      }
+                  preco: 1350.0,
+                },
+              },
+            },
+          },
+        },
+      },
     },
     servers: [
       {
