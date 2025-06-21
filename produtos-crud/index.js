@@ -125,7 +125,7 @@ const DB_PASSWORD = process.env.DB_PASSWORD;
 //Conexão com o MongoDB Atlas
 mongoose
   .connect(
-    `mongodb+srv://${DB_USER}:${DB_PASSWORD}@marciobackend.b1m6vcg.mongodb.net/?retryWrites=true&w=majority&appName=MarcioBackend`
+    `mongodb+srv://lfchiqueto:luis123felipe@marciobackend.b1m6vcg.mongodb.net/?retryWrites=true&w=majority&appName=MarcioBackend`
   )
   .then(console.log("Conectado ao MongoDB Atlas com sucesso!"))
   .catch((e) => {
