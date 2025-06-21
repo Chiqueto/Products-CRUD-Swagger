@@ -102,15 +102,15 @@ const options = {
       },
     },
     servers: [
-      {
-        url: `http://localhost:${process.env.PORT || 3000}`,
-      },
-      {
-        url: `http://localhost:10000`,
-      },
-      {
-        url: `https://jubilant-telegram-x46xqppgxpr2vg6j-3000.app.github.dev`,
-      },
+      // {
+      //   url: `http://localhost:${process.env.PORT || 3000}`,
+      // },
+      // {
+      //   url: `http://localhost:10000`,
+      // },
+      // {
+      //   url: `https://jubilant-telegram-x46xqppgxpr2vg6j-3000.app.github.dev`,
+      // },
       {
         url: "https://products-crud-7qyd.onrender.com",
       },
